@@ -19,6 +19,10 @@ public abstract class BasicAttackAbility : Ability
     {
         DealDamage(user, other);
     }
+    public override void Use(Character user, Character other)
+    {
+        Use(user,new List<Character>(){ other});
+    }
 
     protected abstract void DealDamage(Character user, List<Character> other);
 }

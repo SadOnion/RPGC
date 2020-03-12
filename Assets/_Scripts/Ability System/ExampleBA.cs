@@ -22,4 +22,8 @@ public class ExampleBA : BasicAttackAbility
         damageValue = 25f;
     }
 
+    public override void IconSetup()
+    {
+        icon = Resources.Load<Sprite>("Sprites/axe_ability");
+    }
 }

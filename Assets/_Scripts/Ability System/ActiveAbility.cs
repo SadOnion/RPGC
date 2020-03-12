@@ -12,11 +12,23 @@ public abstract class ActiveAbility : Ability
     {
         if(TurnsUntilReady == 0)
         {
-            ActiveAbilityBody();
+            ActiveAbilityBody(user, other);
             TurnsUntilReady = Cooldown;
         }
-        TurnsUntilReady--;
+        else
+        {
+            TurnsUntilReady--;
+        }
     }
-    protected abstract void SetupCooldownValue();
-    protected abstract void ActiveAbilityBody();
+    public override void Use(Character user, Character other)
+    {
+         Use(user, new List<Character>(){other});
+    }
+    protected abstract void CooldownSetup();
+    protected virtual void Setup()
+    {
+        CooldownSetup();
+        TurnsUntilReady = Cooldown;
+    }
+    protected abstract void ActiveAbilityBody(Character user, List<Character> other);
 }

@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,6 +9,7 @@ public static class Combat
     public static void DealDamageOfType(Character target, ElementType type, float value)
     {
         float resistance = 0;
+        float dmgMultiplier = 1;
         switch(type)
         {
             case ElementType.Fire:
@@ -19,6 +20,7 @@ public static class Combat
                 break;
             case ElementType.Physical:
                 resistance = target.Armor.Value;
+                dmgMultiplier = DAMAGE_REDUCTION_VARIABLE / (DAMAGE_REDUCTION_VARIABLE + resistance);
                 break;
             case ElementType.Water:
                 resistance = target.WaterResist.Value;
@@ -27,8 +29,11 @@ public static class Combat
                 resistance = target.WindResist.Value;
                 break;
         }
+        if(type != ElementType.Physical)
+        {
+            dmgMultiplier = 1 - resistance;
+        }
 
-        float dmgMultiplier = DAMAGE_REDUCTION_VARIABLE / (DAMAGE_REDUCTION_VARIABLE + resistance);
         float calculatedValue = value * dmgMultiplier;
         target.Health.Value -= calculatedValue;
     }

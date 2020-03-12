@@ -6,34 +6,50 @@ public class Battle
 {
     private Player player;
     private List<Enemy> enemies;
+    int counter;
+    private List<string> logs;
     public Battle(Player player, List<Enemy> enemies)
     {
-        this.enemies = new List<Enemy>();
         this.player=player;
         this.enemies=enemies;
+        logs = new List<string>();
     }
 
     public void StartBattle()
     {
-        int counter =0;
-        while(player.health.Value > 0 && enemies.Count > 0)
+        counter =0;
+        do
         {
-            Debug.Log("round"+counter);
-            enemies[0].health.Value -= player.character.Strength.Value;
-             Debug.Log($"Player attacks enemy for {player.character.Strength.Value} Enemy hp:{enemies[0].health.Value}");
-             if(enemies[0].health.Value <=0){
-                Debug.Log("Player Won");
-             enemies.RemoveAt(0);
-                return;
-            }
-            player.health.Value -= enemies[0].character.Strength.Value;
-             Debug.Log($"Enemy attacks player for {enemies[0].character.Strength.Value} Player hp:{player.health.Value}");
-
-           if(player.health.Value <=0)
+            NextRound();
+            float dif = enemies[0].character.Health.Value;
+            player.basicAttack.Use(player.character,enemies[0].character);
+            dif-=enemies[0].character.Health.Value;
+            logs.Add($"Player dealt {dif} damage enemy hp:{enemies[0].character.Health.Value}");
+            RemoveIfDead(enemies[0]);
+            foreach (var item in enemies)
             {
-                Debug.Log("Enemy won");
+                dif = player.character.Health.Value;
+                item.basicAttack.Use(item.character,player.character);
+                dif-=player.character.Health.Value;
+                logs.Add($"Enemy dealt {dif} damage Player hp:{player.character.Health.Value}");
             }
-           counter++;
+        }while(ContinueBattle());
+        foreach (var item in logs)
+        {
+            Debug.Log(item);
+        }
+    }
+    private bool ContinueBattle()=> player.character.Health.Value>0&&enemies.Count>0;
+    private void NextRound()
+    {
+        counter++;
+        logs.Add("Round"+counter);
+    }
+    private void RemoveIfDead(Enemy enemy)
+    {
+        if (enemy.character.Health.Value <= 0)
+        {
+            enemies.Remove(enemy);
         }
     }
     
